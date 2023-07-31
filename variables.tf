@@ -28,7 +28,7 @@ variable "account_tier" {
 variable "account_replication_type" {
   description = "The type of replication to use for this Storage account."
   type        = string
-  default     = "RAGRS"
+  default     = "GRS"
 }
 
 variable "access_tier" {
