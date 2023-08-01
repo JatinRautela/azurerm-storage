@@ -148,6 +148,12 @@ variable "custom_domain" {
   default = null
 }
 
+variable "network_rules_default_action" {
+  description = "This attribute sets the default network access rule for the storage account. It determines the default action that should be taken if no specific rule matches a request. Possible values for this attribute are "Allow" or "Deny". When set to "Allow", all network access is allowed by default, and when set to "Deny", all network access is denied by default."
+  type        = string
+  default     = "Deny"
+}
+
 variable "network_rules_bypass" {
   description = "Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Valid options are any combination of Logging, Metrics, AzureServices, or None"
   type        = list(string)
