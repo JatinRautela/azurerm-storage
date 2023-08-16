@@ -2,10 +2,6 @@
 
 Terraform configuration which creates a Standard General-purpose v2 (GPv2) Storage account.
 
-# Standard GPv2 Storage Example for Azure Storage Account
-
-This Terraform configuration demonstrates how to create an Azure Storage Account with Standard General Purpose v2 (GPv2) performance, along with associated resources.
-
 ## Resources Created
 
 - Azure Resource Group

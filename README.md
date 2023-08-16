@@ -81,7 +81,6 @@ Terraform will show you the resources that will be destroyed. Type `yes` to conf
 | location                             | The location to create the resources in.                                                                                                                   | string    |                                               |
 | account_name                         | The name of this Storage account.                                                                                                                           | string    |                                               |
 | account_kind                         | The Kind of this Storage account.                                                                                                                           | string    | "StorageV2"                                   |
-| ... (other variables)                | ...                                                                                         | ...       | ...                                           |
 
 ## Outputs
 
