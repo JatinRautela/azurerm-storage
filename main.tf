@@ -8,7 +8,7 @@ locals {
   # No need to check for "is_standard_gpv2_storage", since that is what this module is configured for by default.
 }
 
-resource "azurerm_storage_account" "this" {
+resource "azurerm_storage_account" "sa" {
   name                = var.account_name
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -18,8 +18,8 @@ resource "azurerm_storage_account" "this" {
   account_replication_type = var.account_replication_type
   access_tier              = var.access_tier
 
-  enable_https_traffic_only        = true
-  min_tls_version                  = "TLS1_2"
+  enable_https_traffic_only        = var.enable_https_traffic_only
+  min_tls_version                  = var.min_tls_version
   shared_access_key_enabled        = var.shared_access_key_enabled
   is_hns_enabled                   = var.is_hns_enabled
   queue_encryption_key_type        = var.queue_encryption_key_type
@@ -27,7 +27,9 @@ resource "azurerm_storage_account" "this" {
   allow_nested_items_to_be_public  = var.allow_blob_public_access
   cross_tenant_replication_enabled = var.cross_tenant_replication_enabled
 
-  tags = var.tags
+  tags = merge(local.common_tags, tomap({
+    "Name" : local.project_name_prefix
+  }))
 
   dynamic "blob_properties" {
     # Check if blob properties is enabled and supported.
@@ -168,16 +170,16 @@ resource "azurerm_storage_account" "this" {
   }
 }
 
-resource "azurerm_advanced_threat_protection" "this" {
-  target_resource_id = azurerm_storage_account.this.id
+resource "azurerm_advanced_threat_protection" "threat_protection" {
+  target_resource_id = azurerm_storage_account.sa.id
   enabled            = var.advanced_threat_protection_enabled
 }
 
-resource "azurerm_monitor_diagnostic_setting" "this" {
+resource "azurerm_monitor_diagnostic_setting" "monitor" {
   for_each = toset(["blob", "queue", "table", "file"])
 
-  name                           = "audit-logs"
-  target_resource_id             = "${azurerm_storage_account.this.id}/${each.value}Services/default"
+  name                           = var.diagnostic_setting_name
+  target_resource_id             = "${azurerm_storage_account.sa.id}/${each.value}Services/default"
   log_analytics_workspace_id     = var.log_analytics_workspace_id
   log_analytics_destination_type = var.log_analytics_destination_type
 

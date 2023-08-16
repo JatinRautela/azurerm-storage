@@ -28,7 +28,7 @@ variable "account_tier" {
 variable "account_replication_type" {
   description = "The type of replication to use for this Storage account."
   type        = string
-  default     = "GRS"
+  default     = "RAGRS"
 }
 
 variable "access_tier" {
@@ -149,7 +149,7 @@ variable "custom_domain" {
 }
 
 variable "network_rules_default_action" {
-  description = "This attribute sets the default network access rule for the storage account."
+  description = "This attribute sets the default network access rule for the storage account. It determines the default action that should be taken if no specific rule matches a request. Possible values for this attribute are Allow or Deny. When set to Allow, all network access is allowed by default, and when set to Deny, all network access is denied by default."
   type        = string
   default     = "Deny"
 }
@@ -194,8 +194,41 @@ variable "diagnostic_setting_enabled_log_categories" {
   ]
 }
 
-variable "tags" {
-  description = "A map of tags to assign to the resources."
+variable "name" {
+  type        = string
+  description = "A string value to describe prefix of all the resources"
+  default     = ""
+}
+
+variable "default_tags" {
   type        = map(string)
+  description = "A map to add common tags to all the resources"
+  default = {
+    "Scope" : "Storage-Account"
+    "CreatedBy" : "Terraform"
+  }
+}
+
+variable "common_tags" {
+  type        = map(string)
+  description = "A map to add common tags to all the resources"
   default     = {}
+}
+
+variable "enable_https_traffic_only" {
+  description = "value"
+  type = bool
+  default = true
+}
+
+variable "min_tls_version" {
+  description = "value"
+  type = string
+  default = "TLS1_2"
+}
+
+variable "diagnostic_setting_name" {
+  description = "value"
+  type = string
+  default = "audit-logs"
 }

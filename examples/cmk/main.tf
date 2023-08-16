@@ -4,32 +4,32 @@ provider "azurerm" {
   features {}
 }
 
-resource "random_id" "this" {
-  byte_length = 8
+locals {
+  env         = var.env
+  name        = var.pname
+  name_prefix = "${local.env}${local.name}"
 }
 
-data "azurerm_client_config" "current" {}
-
-resource "azurerm_resource_group" "this" {
-  name     = "rg-${random_id.this.hex}"
+resource "azurerm_resource_group" "rg" {
+  name     = "${local.name_prefix}-rg"
   location = var.location
 }
 
 module "log_analytics" {
   source = "git::https://github.com/JatinRautela/azurerm-log-analytics.git"
 
-  workspace_name      = "log-${random_id.this.hex}"
-  resource_group_name = azurerm_resource_group.this.name
-  location            = azurerm_resource_group.this.location
+  workspace_name      = "${local.name_prefix}-log"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
 }
 
 module "storage" {
   # source = "git::https://github.com/JatinRautela/azurerm-storage.git"
   source = "../.."
 
-  account_name               = "st${random_id.this.hex}"
-  resource_group_name        = azurerm_resource_group.this.name
-  location                   = azurerm_resource_group.this.location
+  account_name               = "${local.name_prefix}st"
+  resource_group_name        = azurerm_resource_group.rg.name
+  location                   = azurerm_resource_group.rg.location
   log_analytics_workspace_id = module.log_analytics.workspace_id
   shared_access_key_enabled  = true
 
@@ -53,20 +53,20 @@ module "storage" {
 resource "azurerm_storage_account_customer_managed_key" "ok_cmk" {
   storage_account_id = module.storage.account_id
   key_vault_id       = module.vault.vault_id
-  key_name           = azurerm_key_vault_key.example.name
+  key_name           = azurerm_key_vault_key.vault_key.name
 }
 
 module "vault" {
   source = "git::https://github.com/JatinRautela/azurerm-key-vault.git"
 
-  vault_name                 = "kv-${random_id.this.hex}"
-  resource_group_name        = azurerm_resource_group.this.name
-  location                   = azurerm_resource_group.this.location
+  vault_name                 = "${local.name_prefix}-kv"
+  resource_group_name        = azurerm_resource_group.rg.name
+  location                   = azurerm_resource_group.rg.location
   log_analytics_workspace_id = module.log_analytics.workspace_id
 
   purge_protection_enabled = true
 
-  network_acls_default_action = "Allow"
+  nacl_default_action = "Allow"
 }
 
 resource "azurerm_key_vault_access_policy" "storage" {
@@ -87,7 +87,7 @@ resource "azurerm_key_vault_access_policy" "client" {
   secret_permissions = ["Get", "Set"]
 }
 
-resource "azurerm_key_vault_key" "example" {
+resource "azurerm_key_vault_key" "vault_key" {
   name         = "example-key"
   key_vault_id = module.vault.vault_id
   key_type     = "RSA"
