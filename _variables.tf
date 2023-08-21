@@ -1,16 +1,19 @@
 variable "resource_group_name" {
   description = "The name of the resource group to create the resources in."
   type        = string
+  default     = "rgname"
 }
 
 variable "location" {
   description = "The location to create the resources in."
   type        = string
+  default     = "northeurope"
 }
 
 variable "account_name" {
   description = "The name of this Storage account."
   type        = string
+  default     = "saname"
 }
 
 variable "account_kind" {
@@ -217,18 +220,18 @@ variable "common_tags" {
 
 variable "enable_https_traffic_only" {
   description = "value"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "min_tls_version" {
   description = "value"
-  type = string
-  default = "TLS1_2"
+  type        = string
+  default     = "TLS1_2"
 }
 
 variable "diagnostic_setting_name" {
   description = "value"
-  type = string
-  default = "audit-logs"
+  type        = string
+  default     = "audit-logs"
 }

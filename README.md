@@ -102,3 +102,51 @@ module "storage_account" {
   account_name         = "mystorageaccount"
 }
 ```
+
+## List of variables
+
+
+| Variable Name                                 | Description                                                    | Type          | Required | Default Value        |
+|-----------------------------------------------|----------------------------------------------------------------|---------------|----------|----------------------|
+| `resource_group_name`                         | The name of the resource group to create the resources in.   | `string`      | Yes      |                      |
+| `location`                                    | The location to create the resources in.                     | `string`      | Yes      |                      |
+| `account_name`                                | The name of this Storage account.                            | `string`      | Yes      |                      |
+| `account_kind`                                | The Kind of this Storage account.                            | `string`      | No       | `"StorageV2"`        |
+| `account_tier`                                | The Tier of this Storage account.                            | `string`      | No       | `"Standard"`         |
+| `account_replication_type`                    | The type of replication to use for this Storage account.    | `string`      | No       | `"RAGRS"`            |
+| `access_tier`                                 | The access tier to use for this Storage account.             | `string`      | No       | `"Hot"`              |
+| `shared_access_key_enabled`                   | Is authorization with access key enabled for this Storage account? | `bool` | No       | `false`              |
+| `is_hns_enabled`                              | Is Data Lake Storage Gen2 hierarchical namespace enabled for this Storage account? | `bool` | No | `false` |
+| `queue_encryption_key_type`                   | The type of encryption to use for Queue Storage.             | `string`      | No       | `"Service"`          |
+| `table_encryption_key_type`                   | The type of encryption to use for Table Storage.             | `string`      | No       | `"Service"`          |
+| `allow_blob_public_access`                    | Allow public access to Blob Storage?                        | `bool`        | No       | `false`              |
+| `cross_tenant_replication_enabled`            | Allow cross-tenant replication?                             | `bool`        | No       | `false`              |
+| `blob_properties`                             | Properties of Blob Storage.                                  | `object`      | No       | `{}`                 |
+| `share_properties`                            | Properties of Share Storage.                                 | `object`      | No       | `{}`                 |
+| `queue_properties`                            | Properties of Queue Storage.                                 | `object`      | No       | `{}`                 |
+| `identity`                                    | Identity to configure for this Storage account.              | `object`      | No       | `null`               |
+| `network_rules_virtual_network_subnet_ids`    | Allowed subnet resources ids using service endpoints.       | `list(string)` | No       | `[]`                 |
+| `custom_domain`                               | Custom (sub) domain name of the Storage Account.             | `object`      | No       | `null`               |
+| `network_rules_default_action`                | Default network access rule for the storage account.        | `string`      | No       | `"Deny"`             |
+| `network_rules_bypass`                        | Specifies whether traffic is bypassed for certain services. | `list(string)` | No       | `["AzureServices"]`  |
+| `network_rules_ip_rules`                      | Public IPs or IP ranges in CIDR format to access the Storage account. | `list(string)` | No | `[]`           |
+| `advanced_threat_protection_enabled`          | Is advanced threat protection (Microsoft Defender for Storage) enabled? | `bool` | No   | `true`               |
+| `log_analytics_workspace_id`                  | ID of the Log Analytics workspace to send diagnostics to.   | `string`      | No       |                      |
+| `log_analytics_destination_type`              | Type of log analytics destination to use for Log Analytics Workspace. | `string` | No | `null`           |
+| `diagnostic_setting_enabled_log_categories`   | List of log categories to be enabled for diagnostic setting. | `list(string)` | No    | `["StorageRead", "StorageWrite", "StorageDelete"]` |
+| `name`                                        | String value to describe prefix of all the resources.       | `string`      | No       | `""`                 |
+| `default_tags`                                | Map to add common tags to all the resources.                | `map(string)` | No       | See below            |
+| `common_tags`                                 | Map to add common tags to all the resources.                | `map(string)` | No       | `{}`                 |
+| `enable_https_traffic_only`                   | Value indicating if only HTTPS traffic is allowed.          | `bool`        | No       | `true`               |
+| `min_tls_version`                             | Minimum TLS version.                                        | `string`      | No       | `"TLS1_2"`            |
+| `diagnostic_setting_name`                     | Name of the diagnostic setting.                             | `string`      | No       | `"audit-logs"`       |
+
+Default value for `default_tags`:
+```hcl
+{
+  "Scope": "Storage-Account",
+  "CreatedBy": "Terraform"
+}
+```
+
+Please note that the variables in the "Required" column that are marked "No" can be left empty if you don't want to provide a value for them.
