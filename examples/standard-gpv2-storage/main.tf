@@ -16,7 +16,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 module "log_analytics" {
-  source = "git::https://github.com/JatinRautela/azurerm-log-analytics.git"
+  source = "git::https://github.com/tothenew/terraform-azure-loganalytics.git"
 
   workspace_name      = "${local.name_prefix}-log"
   resource_group_name = azurerm_resource_group.rg.name
@@ -24,7 +24,7 @@ module "log_analytics" {
 }
 
 module "storage" {
-  # source = "git::https://github.com/JatinRautela/azurerm-storage.git"
+  # source = "git::https://github.com/tothenew/terraform-azure-storageaccount.git"
   source = "../.."
 
   account_name               = "${local.name_prefix}st"

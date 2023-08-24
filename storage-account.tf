@@ -1,13 +1,3 @@
-locals {
-  is_premium_block_blob_storage = var.account_tier == "Premium" && var.account_kind == "BlockBlobStorage"
-  is_premium_data_lake_storage  = var.account_tier == "Premium" && var.account_kind == "BlockBlobStorage" && var.is_hns_enabled
-  is_premium_file_storage       = var.account_tier == "Premium" && var.account_kind == "FileStorage"
-  is_premium_gpv2_storage       = var.account_tier == "Premium" && var.account_kind == "StorageV2"
-  is_standard_blob_storage      = var.account_tier == "Standard" && var.account_kind == "BlobStorage"
-  is_standard_data_lake_storage = var.account_tier == "Standard" && var.account_kind == "StorageV2" && var.is_hns_enabled
-  # No need to check for "is_standard_gpv2_storage", since that is what this module is configured for by default.
-}
-
 resource "azurerm_storage_account" "sa" {
   name                = var.account_name
   resource_group_name = var.resource_group_name
@@ -166,48 +156,6 @@ resource "azurerm_storage_account" "sa" {
     content {
       name          = custom_domain.value["name"]
       use_subdomain = custom_domain.value["use_subdomain"]
-    }
-  }
-}
-
-resource "azurerm_advanced_threat_protection" "threat_protection" {
-  target_resource_id = azurerm_storage_account.sa.id
-  enabled            = var.advanced_threat_protection_enabled
-}
-
-resource "azurerm_monitor_diagnostic_setting" "monitor" {
-  for_each = toset(["blob", "queue", "table", "file"])
-
-  name                           = var.diagnostic_setting_name
-  target_resource_id             = "${azurerm_storage_account.sa.id}/${each.value}Services/default"
-  log_analytics_workspace_id     = var.log_analytics_workspace_id
-  log_analytics_destination_type = var.log_analytics_destination_type
-
-  dynamic "enabled_log" {
-    for_each = toset(var.diagnostic_setting_enabled_log_categories)
-
-    content {
-      category = enabled_log.value
-    }
-  }
-
-  metric {
-    category = "Capacity"
-    enabled  = false
-
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
-  }
-
-  metric {
-    category = "Transaction"
-    enabled  = false
-
-    retention_policy {
-      days    = 0
-      enabled = false
     }
   }
 }
